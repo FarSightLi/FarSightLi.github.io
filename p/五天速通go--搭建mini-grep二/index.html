@@ -1,0 +1,704 @@
+<!doctype html><html lang=en dir=ltr><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><meta name=description content="通过模仿grep工具来快速入门go语言"><title>五天速通go--搭建mini-grep(二)</title>
+<link rel=canonical href=https://farsightli.github.io/p/%E4%BA%94%E5%A4%A9%E9%80%9F%E9%80%9Ago--%E6%90%AD%E5%BB%BAmini-grep%E4%BA%8C/><link rel=stylesheet href=/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css><meta property='og:title' content="五天速通go--搭建mini-grep(二)"><meta property='og:description' content="通过模仿grep工具来快速入门go语言"><meta property='og:url' content='https://farsightli.github.io/p/%E4%BA%94%E5%A4%A9%E9%80%9F%E9%80%9Ago--%E6%90%AD%E5%BB%BAmini-grep%E4%BA%8C/'><meta property='og:site_name' content='骆灵上的个人网站'><meta property='og:type' content='article'><meta property='article:section' content='Post'><meta property='article:tag' content='Go'><meta property='article:tag' content='项目实战'><meta property='article:published_time' content='2025-05-01T00:00:00+00:00'><meta property='article:modified_time' content='2025-05-01T00:00:00+00:00'><meta name=twitter:title content="五天速通go--搭建mini-grep(二)"><meta name=twitter:description content="通过模仿grep工具来快速入门go语言"></head><body class=article-page><script>(function(){const e="StackColorScheme";localStorage.getItem(e)||localStorage.setItem(e,"auto")})()</script><script>(function(){const t="StackColorScheme",e=localStorage.getItem(t),n=window.matchMedia("(prefers-color-scheme: dark)").matches===!0;e=="dark"||e==="auto"&&n?document.documentElement.dataset.scheme="dark":document.documentElement.dataset.scheme="light"})()</script><div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky"><button class="hamburger hamburger--spin" type=button id=toggle-menu aria-label="Toggle Menu">
+<span class=hamburger-box><span class=hamburger-inner></span></span></button><header><figure class=site-avatar><a href=/><img src=/img/avatar_huda2458f72ce188392d75c5d51cd8e24e_373_300x0_resize_box_3.png width=300 height=300 class=site-logo loading=lazy alt=Avatar>
+</a><span class=emoji>🧐</span></figure><div class=site-meta><h1 class=site-name><a href=/>骆灵上的个人网站</a></h1><h2 class=site-description>知是行之始，行是知之成</h2></div></header><ol class=menu-social><li><a href=https://github.com/CaiJimmy/hugo-theme-stack target=_blank title=GitHub rel=me><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6.0 00-1.3-3.2 4.2 4.2.0 00-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3.0 00-6.2.0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2.0 00-.1 3.2A4.6 4.6.0 004 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg></a></li><li><a href=https://twitter.com target=_blank title=Twitter rel=me><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M22 4.01c-1 .49-1.98.689-3 .99-1.121-1.265-2.783-1.335-4.38-.737S11.977 6.323 12 8v1c-3.245.083-6.135-1.395-8-4 0 0-4.182 7.433 4 11-1.872 1.247-3.739 2.088-6 2 3.308 1.803 6.913 2.423 10.034 1.517 3.58-1.04 6.522-3.723 7.651-7.742a13.84 13.84.0 00.497-3.753C20.18 7.773 21.692 5.25 22 4.009z"/></svg></a></li></ol><ol class=menu id=main-menu><li><a href=/><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><polyline points="5 12 3 12 12 3 21 12 19 12"/><path d="M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/><path d="M9 21v-6a2 2 0 012-2h2a2 2 0 012 2v6"/></svg>
+<span>Home</span></a></li><li><a href=/about/><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="7" r="4"/><path d="M6 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg>
+<span>About</span></a></li><li><a href=/archives/><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><rect x="3" y="4" width="18" height="4" rx="2"/><path d="M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+<span>Archives</span></a></li><li><a href=/search/><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="10" cy="10" r="7"/><line x1="21" y1="21" x2="15" y2="15"/></svg>
+<span>Search</span></a></li><li><a href=/links/><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M10 14a3.5 3.5.0 005 0l4-4a3.5 3.5.0 00-5-5l-.5.5"/><path d="M14 10a3.5 3.5.0 00-5 0l-4 4a3.5 3.5.0 005 5l.5-.5"/></svg>
+<span>Links</span></a></li><li class=menu-bottom-section><ol class=menu><li id=i18n-switch><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 5h7"/><path d="M9 3v2c0 4.418-2.239 8-5 8"/><path d="M5 9c-.003 2.144 2.952 3.908 6.7 4"/><path d="M12 20l4-9 4 9"/><path d="M19.1 18h-6.2"/></svg>
+<select name=language title=language onchange="window.location.href=this.selectedOptions[0].value"><option value=https://farsightli.github.io/ selected>English</option><option value=https://farsightli.github.io/zh-cn/>中文</option></select></li><li id=dark-mode-toggle><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="8" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="16" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<span>Dark Mode</span></li></ol></li></ol></aside><aside class="sidebar right-sidebar sticky"><section class="widget archives"><div class=widget-icon><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><line x1="5" y1="9" x2="19" y2="9"/><line x1="5" y1="15" x2="19" y2="15"/><line x1="11" y1="4" x2="7" y2="20"/><line x1="17" y1="4" x2="13" y2="20"/></svg></div><h2 class="widget-title section-title">Table of contents</h2><div class=widget--toc><nav id=TableOfContents><ol><li><a href=#前言>前言</a></li><li><a href=#正文>正文</a><ol><li><a href=#功能拓展>功能拓展</a></li><li><a href=#优化参数获取>优化参数获取</a><ol><li><a href=#结构体>结构体</a></li></ol></li><li><a href=#实现思路>实现思路</a></li><li><a href=#单元测试>单元测试</a></li></ol></li><li><a href=#代码全文>代码全文</a></li><li><a href=#总结>总结</a></li></ol></nav></div></section></aside><main class="main full-width"><article class=main-article><header class=article-header><div class=article-details><header class=article-category><a href=/categories/go/>Go
+</a><a href=/categories/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/>项目实战</a></header><div class=article-title-wrapper><h2 class=article-title><a href=/p/%E4%BA%94%E5%A4%A9%E9%80%9F%E9%80%9Ago--%E6%90%AD%E5%BB%BAmini-grep%E4%BA%8C/>五天速通go--搭建mini-grep(二)</a></h2><h3 class=article-subtitle>通过模仿grep工具来快速入门go语言</h3></div><footer class=article-time><div><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M11.795 21H5a2 2 0 01-2-2V7a2 2 0 012-2h12a2 2 0 012 2v4"/><circle cx="18" cy="18" r="4"/><path d="M15 3v4"/><path d="M7 3v4"/><path d="M3 11h16"/><path d="M18 16.496V18l1 1"/></svg>
+<time class=article-time--published>May 01, 2025</time></div><div><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+<time class=article-time--reading>7 minute read</time></div></footer></div></header><section class=article-content><h2 id=前言>前言</h2><p>笔者有两年Java开发经验，目前需要临时用go语言开发一些功能，为了快速入手Go语言，在简单了解基础语法后，决定以实战来巩固知识。</p><p>参考了《Rust圣经》的思路，决定先开发一个模仿grep的工具，来快速巩固基础语法、Go项目管理。</p><p>为精简内容，本系列不包含环境搭建等基础部分（网上教程写的更清楚详细），直接讲解开发思路。希望能对后来者提供一些入门思路。</p><p>笔者整体思路：大致了解go语言的语法，了解某个工具的大致功能、实现方法。然后再辅以AI语法提示（仅仅告诉某个细节，比如如何读取参数等，而不是直接让ai实现功能）。这样便能快速入门一个不算复杂的语言。</p><p>PS：代码仓库: <a class=link href=https://github.com/FarSightLi/minigrep target=_blank rel=noopener>https://github.com/FarSightLi/minigrep</a></p><h2 id=正文>正文</h2><h3 id=功能拓展>功能拓展</h3><p>在上一篇中，我们初步完成了一个及其简陋的grep程序，在这一节中，我们将逐步拓展功能。</p><p>在笔者日常工作中，-An(匹配列的下n行)， -an（匹配列的上下n行）、-Bn（匹配列的上n行）、-n（显示行号）、-i（忽略大小写）、-e（启用正则匹配）。在这篇中，我们就拓展这几种参数功能。</p><h3 id=优化参数获取>优化参数获取</h3><p>在上一篇的原始版本中，我们使用这种 方式获得文件路径和搜索文本。这两个参数可以被视为”必须参数“（虽然filepath不一定必须，可以从输入流中获取，当然这是后话了）。而刚刚提到的诸如 -a等参数却可以使用任意个。所以我们通过从数组args的指定位置获取的方法就不适用了。这种参数称之为选项参数</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-GO data-lang=GO><span class=line><span class=cl><span class=nx>filepath</span> <span class=p>=</span> <span class=nx>args</span><span class=p>[</span><span class=mi>1</span><span class=p>]</span>
+</span></span><span class=line><span class=cl> <span class=nx>searchText</span> <span class=p>=</span> <span class=nx>args</span><span class=p>[</span><span class=mi>2</span><span class=p>]</span>
+</span></span></code></pre></td></tr></table></div></div><p>在golang中，选项参数可以用go的函数flag.CommandLine.Parse(args[1:])获取</p><p>使用方法如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl>    <span class=c1>// 选项参数用flag解析
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nx>isIgnoreCase</span> <span class=o>:=</span> <span class=nx>flag</span><span class=p>.</span><span class=nf>Bool</span><span class=p>(</span><span class=s>&#34;i&#34;</span><span class=p>,</span> <span class=kc>false</span><span class=p>,</span> <span class=s>&#34;ignore case&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=nx>around</span> <span class=o>:=</span> <span class=nx>flag</span><span class=p>.</span><span class=nf>Int</span><span class=p>(</span><span class=s>&#34;a&#34;</span><span class=p>,</span> <span class=mi>0</span><span class=p>,</span> <span class=s>&#34;around line&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=nx>isIncludeLineNumber</span> <span class=o>:=</span> <span class=nx>flag</span><span class=p>.</span><span class=nf>Bool</span><span class=p>(</span><span class=s>&#34;n&#34;</span><span class=p>,</span> <span class=kc>false</span><span class=p>,</span> <span class=s>&#34;include line number&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=nx>err</span> <span class=o>:=</span> <span class=nx>flag</span><span class=p>.</span><span class=nx>CommandLine</span><span class=p>.</span><span class=nf>Parse</span><span class=p>(</span><span class=nx>args</span><span class=p>[</span><span class=mi>1</span><span class=p>:])</span>
+</span></span></code></pre></td></tr></table></div></div><p>需要注意的是，flag.Int获得的是指针类型</p><p>args从1号位切片是因为0号位是我们的程序名</p><p>使用时，这些选项参数如这样使用：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>go run main.go -i -a <span class=m>2</span> -n  <span class=c1>#{文件路径} #{搜索内容}</span>
+</span></span></code></pre></td></tr></table></div></div><h4 id=结构体>结构体</h4><p>虽然golang的方法可以拥有多个返回值，但是解析完的多个参数并不适合直接返回，可以用结构体包装后返回</p><p>结构体大致如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kd>type</span> <span class=nx>cmdArgs</span> <span class=kd>struct</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>filepath</span>            <span class=kt>string</span>
+</span></span><span class=line><span class=cl>    <span class=nx>searchText</span>          <span class=kt>string</span>
+</span></span><span class=line><span class=cl>    <span class=nx>isIgnoreCase</span>        <span class=kt>bool</span>
+</span></span><span class=line><span class=cl>    <span class=nx>isIncludeLineNumber</span> <span class=kt>bool</span>
+</span></span><span class=line><span class=cl>    <span class=nx>afterLine</span>           <span class=kt>int</span>
+</span></span><span class=line><span class=cl>    <span class=nx>beforeLine</span>          <span class=kt>int</span>
+</span></span><span class=line><span class=cl>    <span class=nx>aroundLine</span>          <span class=kt>int</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=实现思路>实现思路</h3><p>可以发现，这些参数中，-i、-e等选项是用于决定如何匹配文本的，而-a -n等参数实则是控制输出的。所以我们可以将其抽象为两个函数，一个用于在遍历每行内容时匹配文本，另一个用于在匹配后输出内容</p><p>核心代码大致实现如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span><span class=lnt>52
+</span><span class=lnt>53
+</span><span class=lnt>54
+</span><span class=lnt>55
+</span><span class=lnt>56
+</span><span class=lnt>57
+</span><span class=lnt>58
+</span><span class=lnt>59
+</span><span class=lnt>60
+</span><span class=lnt>61
+</span><span class=lnt>62
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=cm>/**
+</span></span></span><span class=line><span class=cl><span class=cm> * 搜索文件并打印内容
+</span></span></span><span class=line><span class=cl><span class=cm> */</span>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>searchFile</span><span class=p>(</span><span class=nx>content</span> <span class=kt>string</span><span class=p>,</span> <span class=nx>cmdArgs</span> <span class=nx>cmdArgs</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=nx>content</span> <span class=o>==</span> <span class=s>&#34;&#34;</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=nx>searchText</span> <span class=o>:=</span> <span class=nx>cmdArgs</span><span class=p>.</span><span class=nx>searchText</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 提前编译正则
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nx>compile</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>regexp</span><span class=p>.</span><span class=nf>Compile</span><span class=p>(</span><span class=nx>searchText</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>_</span><span class=p>,</span> <span class=nx>_</span> <span class=p>=</span> <span class=nx>fmt</span><span class=p>.</span><span class=nf>Fprintf</span><span class=p>(</span><span class=nx>os</span><span class=p>.</span><span class=nx>Stderr</span><span class=p>,</span> <span class=s>&#34;非法的正则表达式: %v\n&#34;</span><span class=p>,</span> <span class=nx>err</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=nx>lines</span> <span class=o>:=</span> <span class=nx>strings</span><span class=p>.</span><span class=nf>Split</span><span class=p>(</span><span class=nx>content</span><span class=p>,</span> <span class=s>&#34;\n&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=nx>lineNum</span><span class=p>,</span> <span class=nx>line</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>lines</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=c1>// 使用正则模式
+</span></span></span><span class=line><span class=cl><span class=c1></span>        <span class=k>if</span> <span class=nx>cmdArgs</span><span class=p>.</span><span class=nx>useRegex</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=k>if</span> <span class=nx>compile</span><span class=p>.</span><span class=nf>MatchString</span><span class=p>(</span><span class=nx>line</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=nf>printLine</span><span class=p>(</span><span class=nx>cmdArgs</span><span class=p>,</span> <span class=nx>lines</span><span class=p>,</span> <span class=nx>lineNum</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=k>if</span> <span class=nx>cmdArgs</span><span class=p>.</span><span class=nx>isIgnoreCase</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=nx>searchText</span> <span class=p>=</span> <span class=nx>strings</span><span class=p>.</span><span class=nf>ToLower</span><span class=p>(</span><span class=nx>cmdArgs</span><span class=p>.</span><span class=nx>searchText</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>                <span class=nx>line</span> <span class=p>=</span> <span class=nx>strings</span><span class=p>.</span><span class=nf>ToLower</span><span class=p>(</span><span class=nx>line</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>            <span class=k>if</span> <span class=nx>strings</span><span class=p>.</span><span class=nf>Contains</span><span class=p>(</span><span class=nx>line</span><span class=p>,</span> <span class=nx>searchText</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=nf>printLine</span><span class=p>(</span><span class=nx>cmdArgs</span><span class=p>,</span> <span class=nx>lines</span><span class=p>,</span> <span class=nx>lineNum</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=cm>/**
+</span></span></span><span class=line><span class=cl><span class=cm> * 根据参数打印匹配上的行
+</span></span></span><span class=line><span class=cl><span class=cm> */</span>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>printLine</span><span class=p>(</span><span class=nx>cmdArgs</span> <span class=nx>cmdArgs</span><span class=p>,</span> <span class=nx>lines</span> <span class=p>[]</span><span class=kt>string</span><span class=p>,</span> <span class=nx>lineNum</span> <span class=kt>int</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kd>var</span> <span class=nx>a</span><span class=p>,</span> <span class=nx>b</span> <span class=kt>int</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=nx>cmdArgs</span><span class=p>.</span><span class=nx>aroundLine</span> <span class=p>&gt;</span> <span class=mi>0</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>a</span> <span class=p>=</span> <span class=nx>cmdArgs</span><span class=p>.</span><span class=nx>aroundLine</span>
+</span></span><span class=line><span class=cl>        <span class=nx>b</span> <span class=p>=</span> <span class=nx>cmdArgs</span><span class=p>.</span><span class=nx>aroundLine</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>a</span> <span class=p>=</span> <span class=nx>cmdArgs</span><span class=p>.</span><span class=nx>afterLine</span>
+</span></span><span class=line><span class=cl>        <span class=nx>b</span> <span class=p>=</span> <span class=nx>cmdArgs</span><span class=p>.</span><span class=nx>beforeLine</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=nx>start</span> <span class=o>:=</span> <span class=nx>lineNum</span> <span class=o>-</span> <span class=nx>a</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=nx>start</span> <span class=p>&lt;</span> <span class=mi>0</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>start</span> <span class=p>=</span> <span class=mi>0</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=nx>end</span> <span class=o>:=</span> <span class=nx>lineNum</span> <span class=o>+</span> <span class=nx>b</span>
+</span></span><span class=line><span class=cl>    <span class=nx>length</span> <span class=o>:=</span> <span class=nb>len</span><span class=p>(</span><span class=nx>lines</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=nx>end</span> <span class=o>&gt;=</span> <span class=nx>length</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>end</span> <span class=p>=</span> <span class=nx>length</span> <span class=o>-</span> <span class=mi>1</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=nx>index</span> <span class=o>:=</span> <span class=nx>start</span><span class=p>;</span> <span class=nx>index</span> <span class=o>&lt;=</span> <span class=nx>end</span><span class=p>;</span> <span class=nx>index</span><span class=o>++</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=nx>cmdArgs</span><span class=p>.</span><span class=nx>isIncludeLineNumber</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;%d:%s\n&#34;</span><span class=p>,</span> <span class=nx>index</span><span class=p>,</span> <span class=nx>lines</span><span class=p>[</span><span class=nx>index</span><span class=p>])</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>lines</span><span class=p>[</span><span class=nx>index</span><span class=p>])</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=单元测试>单元测试</h3><p>为了方便测试，匹配行后不再直接输出，而是返回数组，最后同意输出（由AI生成）</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span><span class=lnt>52
+</span><span class=lnt>53
+</span><span class=lnt>54
+</span><span class=lnt>55
+</span><span class=lnt>56
+</span><span class=lnt>57
+</span><span class=lnt>58
+</span><span class=lnt>59
+</span><span class=lnt>60
+</span><span class=lnt>61
+</span><span class=lnt>62
+</span><span class=lnt>63
+</span><span class=lnt>64
+</span><span class=lnt>65
+</span><span class=lnt>66
+</span><span class=lnt>67
+</span><span class=lnt>68
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kd>func</span> <span class=nf>TestMatchLines</span><span class=p>(</span><span class=nx>t</span> <span class=o>*</span><span class=nx>testing</span><span class=p>.</span><span class=nx>T</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>tests</span> <span class=o>:=</span> <span class=p>[]</span><span class=kd>struct</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>name</span>     <span class=kt>string</span>
+</span></span><span class=line><span class=cl>        <span class=nx>content</span>  <span class=kt>string</span>
+</span></span><span class=line><span class=cl>        <span class=nx>cmdArgs</span>  <span class=nx>cmdArgs</span>
+</span></span><span class=line><span class=cl>        <span class=nx>expected</span> <span class=p>[]</span><span class=kt>string</span>
+</span></span><span class=line><span class=cl>    <span class=p>}{</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=nx>name</span><span class=p>:</span>    <span class=s>&#34;普通匹配&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=nx>content</span><span class=p>:</span> <span class=s>&#34;apple banana\ncherry apple\ndate&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=nx>cmdArgs</span><span class=p>:</span> <span class=nx>cmdArgs</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=nx>searchText</span><span class=p>:</span> <span class=s>&#34;apple&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=p>},</span>
+</span></span><span class=line><span class=cl>            <span class=nx>expected</span><span class=p>:</span> <span class=p>[]</span><span class=kt>string</span><span class=p>{</span><span class=s>&#34;apple banana&#34;</span><span class=p>,</span> <span class=s>&#34;cherry apple&#34;</span><span class=p>},</span>
+</span></span><span class=line><span class=cl>        <span class=p>},</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=nx>name</span><span class=p>:</span>    <span class=s>&#34;忽略大小写&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=nx>content</span><span class=p>:</span> <span class=s>&#34;Apple banana\nCHERRY APPLE&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=nx>cmdArgs</span><span class=p>:</span> <span class=nx>cmdArgs</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=nx>searchText</span><span class=p>:</span>   <span class=s>&#34;apple&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=nx>isIgnoreCase</span><span class=p>:</span> <span class=kc>true</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=p>},</span>
+</span></span><span class=line><span class=cl>            <span class=nx>expected</span><span class=p>:</span> <span class=p>[]</span><span class=kt>string</span><span class=p>{</span><span class=s>&#34;Apple banana&#34;</span><span class=p>,</span> <span class=s>&#34;CHERRY APPLE&#34;</span><span class=p>},</span>
+</span></span><span class=line><span class=cl>        <span class=p>},</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=nx>name</span><span class=p>:</span>    <span class=s>&#34;正则匹配以 a 开头&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=nx>content</span><span class=p>:</span> <span class=s>&#34;apple banana\ngrape apple\nant&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=nx>cmdArgs</span><span class=p>:</span> <span class=nx>cmdArgs</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=nx>searchText</span><span class=p>:</span> <span class=s>&#34;^[aA]&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=nx>useRegex</span><span class=p>:</span>   <span class=kc>true</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=p>},</span>
+</span></span><span class=line><span class=cl>            <span class=nx>expected</span><span class=p>:</span> <span class=p>[]</span><span class=kt>string</span><span class=p>{</span><span class=s>&#34;apple banana&#34;</span><span class=p>,</span> <span class=s>&#34;ant&#34;</span><span class=p>},</span>
+</span></span><span class=line><span class=cl>        <span class=p>},</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=nx>name</span><span class=p>:</span>    <span class=s>&#34;上下文两行&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=nx>content</span><span class=p>:</span> <span class=s>&#34;line1\nline2\napple\nline4\nline5&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=nx>cmdArgs</span><span class=p>:</span> <span class=nx>cmdArgs</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=nx>searchText</span><span class=p>:</span> <span class=s>&#34;apple&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=nx>aroundLine</span><span class=p>:</span> <span class=mi>2</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=p>},</span>
+</span></span><span class=line><span class=cl>            <span class=nx>expected</span><span class=p>:</span> <span class=p>[]</span><span class=kt>string</span><span class=p>{</span><span class=s>&#34;line1&#34;</span><span class=p>,</span> <span class=s>&#34;line2&#34;</span><span class=p>,</span> <span class=s>&#34;apple&#34;</span><span class=p>,</span> <span class=s>&#34;line4&#34;</span><span class=p>,</span> <span class=s>&#34;line5&#34;</span><span class=p>},</span>
+</span></span><span class=line><span class=cl>        <span class=p>},</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=nx>name</span><span class=p>:</span>    <span class=s>&#34;显示行号&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=nx>content</span><span class=p>:</span> <span class=s>&#34;hello\nworld\nhello again&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=nx>cmdArgs</span><span class=p>:</span> <span class=nx>cmdArgs</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=nx>searchText</span><span class=p>:</span>          <span class=s>&#34;hello&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=nx>isIncludeLineNumber</span><span class=p>:</span> <span class=kc>true</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=p>},</span>
+</span></span><span class=line><span class=cl>            <span class=nx>expected</span><span class=p>:</span> <span class=p>[]</span><span class=kt>string</span><span class=p>{</span><span class=s>&#34;0:hello&#34;</span><span class=p>,</span> <span class=s>&#34;2:hello again&#34;</span><span class=p>},</span>
+</span></span><span class=line><span class=cl>        <span class=p>},</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=nx>_</span><span class=p>,</span> <span class=nx>tt</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>tests</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>t</span><span class=p>.</span><span class=nf>Run</span><span class=p>(</span><span class=nx>tt</span><span class=p>.</span><span class=nx>name</span><span class=p>,</span> <span class=kd>func</span><span class=p>(</span><span class=nx>t</span> <span class=o>*</span><span class=nx>testing</span><span class=p>.</span><span class=nx>T</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=nx>results</span> <span class=o>:=</span> <span class=nf>MatchLines</span><span class=p>(</span><span class=nx>tt</span><span class=p>.</span><span class=nx>content</span><span class=p>,</span> <span class=nx>tt</span><span class=p>.</span><span class=nx>cmdArgs</span><span class=p>,</span> <span class=nb>make</span><span class=p>(</span><span class=kd>map</span><span class=p>[</span><span class=kt>int</span><span class=p>]</span><span class=kd>struct</span><span class=p>{}))</span>
+</span></span><span class=line><span class=cl>            <span class=k>if</span> <span class=nb>len</span><span class=p>(</span><span class=nx>results</span><span class=p>)</span> <span class=o>!=</span> <span class=nb>len</span><span class=p>(</span><span class=nx>tt</span><span class=p>.</span><span class=nx>expected</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=nx>t</span><span class=p>.</span><span class=nf>Errorf</span><span class=p>(</span><span class=s>&#34;预期 %d 行，实际 %d 行&#34;</span><span class=p>,</span> <span class=nb>len</span><span class=p>(</span><span class=nx>tt</span><span class=p>.</span><span class=nx>expected</span><span class=p>),</span> <span class=nb>len</span><span class=p>(</span><span class=nx>results</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>                <span class=k>return</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>            <span class=k>for</span> <span class=nx>i</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>results</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=k>if</span> <span class=nx>results</span><span class=p>[</span><span class=nx>i</span><span class=p>]</span> <span class=o>!=</span> <span class=nx>tt</span><span class=p>.</span><span class=nx>expected</span><span class=p>[</span><span class=nx>i</span><span class=p>]</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>                    <span class=nx>t</span><span class=p>.</span><span class=nf>Errorf</span><span class=p>(</span><span class=s>&#34;第 %d 行期望 %q，实际 %q&#34;</span><span class=p>,</span> <span class=nx>i</span><span class=p>,</span> <span class=nx>tt</span><span class=p>.</span><span class=nx>expected</span><span class=p>[</span><span class=nx>i</span><span class=p>],</span> <span class=nx>results</span><span class=p>[</span><span class=nx>i</span><span class=p>])</span>
+</span></span><span class=line><span class=cl>                <span class=p>}</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=p>})</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><h2 id=代码全文>代码全文</h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>  1
+</span><span class=lnt>  2
+</span><span class=lnt>  3
+</span><span class=lnt>  4
+</span><span class=lnt>  5
+</span><span class=lnt>  6
+</span><span class=lnt>  7
+</span><span class=lnt>  8
+</span><span class=lnt>  9
+</span><span class=lnt> 10
+</span><span class=lnt> 11
+</span><span class=lnt> 12
+</span><span class=lnt> 13
+</span><span class=lnt> 14
+</span><span class=lnt> 15
+</span><span class=lnt> 16
+</span><span class=lnt> 17
+</span><span class=lnt> 18
+</span><span class=lnt> 19
+</span><span class=lnt> 20
+</span><span class=lnt> 21
+</span><span class=lnt> 22
+</span><span class=lnt> 23
+</span><span class=lnt> 24
+</span><span class=lnt> 25
+</span><span class=lnt> 26
+</span><span class=lnt> 27
+</span><span class=lnt> 28
+</span><span class=lnt> 29
+</span><span class=lnt> 30
+</span><span class=lnt> 31
+</span><span class=lnt> 32
+</span><span class=lnt> 33
+</span><span class=lnt> 34
+</span><span class=lnt> 35
+</span><span class=lnt> 36
+</span><span class=lnt> 37
+</span><span class=lnt> 38
+</span><span class=lnt> 39
+</span><span class=lnt> 40
+</span><span class=lnt> 41
+</span><span class=lnt> 42
+</span><span class=lnt> 43
+</span><span class=lnt> 44
+</span><span class=lnt> 45
+</span><span class=lnt> 46
+</span><span class=lnt> 47
+</span><span class=lnt> 48
+</span><span class=lnt> 49
+</span><span class=lnt> 50
+</span><span class=lnt> 51
+</span><span class=lnt> 52
+</span><span class=lnt> 53
+</span><span class=lnt> 54
+</span><span class=lnt> 55
+</span><span class=lnt> 56
+</span><span class=lnt> 57
+</span><span class=lnt> 58
+</span><span class=lnt> 59
+</span><span class=lnt> 60
+</span><span class=lnt> 61
+</span><span class=lnt> 62
+</span><span class=lnt> 63
+</span><span class=lnt> 64
+</span><span class=lnt> 65
+</span><span class=lnt> 66
+</span><span class=lnt> 67
+</span><span class=lnt> 68
+</span><span class=lnt> 69
+</span><span class=lnt> 70
+</span><span class=lnt> 71
+</span><span class=lnt> 72
+</span><span class=lnt> 73
+</span><span class=lnt> 74
+</span><span class=lnt> 75
+</span><span class=lnt> 76
+</span><span class=lnt> 77
+</span><span class=lnt> 78
+</span><span class=lnt> 79
+</span><span class=lnt> 80
+</span><span class=lnt> 81
+</span><span class=lnt> 82
+</span><span class=lnt> 83
+</span><span class=lnt> 84
+</span><span class=lnt> 85
+</span><span class=lnt> 86
+</span><span class=lnt> 87
+</span><span class=lnt> 88
+</span><span class=lnt> 89
+</span><span class=lnt> 90
+</span><span class=lnt> 91
+</span><span class=lnt> 92
+</span><span class=lnt> 93
+</span><span class=lnt> 94
+</span><span class=lnt> 95
+</span><span class=lnt> 96
+</span><span class=lnt> 97
+</span><span class=lnt> 98
+</span><span class=lnt> 99
+</span><span class=lnt>100
+</span><span class=lnt>101
+</span><span class=lnt>102
+</span><span class=lnt>103
+</span><span class=lnt>104
+</span><span class=lnt>105
+</span><span class=lnt>106
+</span><span class=lnt>107
+</span><span class=lnt>108
+</span><span class=lnt>109
+</span><span class=lnt>110
+</span><span class=lnt>111
+</span><span class=lnt>112
+</span><span class=lnt>113
+</span><span class=lnt>114
+</span><span class=lnt>115
+</span><span class=lnt>116
+</span><span class=lnt>117
+</span><span class=lnt>118
+</span><span class=lnt>119
+</span><span class=lnt>120
+</span><span class=lnt>121
+</span><span class=lnt>122
+</span><span class=lnt>123
+</span><span class=lnt>124
+</span><span class=lnt>125
+</span><span class=lnt>126
+</span><span class=lnt>127
+</span><span class=lnt>128
+</span><span class=lnt>129
+</span><span class=lnt>130
+</span><span class=lnt>131
+</span><span class=lnt>132
+</span><span class=lnt>133
+</span><span class=lnt>134
+</span><span class=lnt>135
+</span><span class=lnt>136
+</span><span class=lnt>137
+</span><span class=lnt>138
+</span><span class=lnt>139
+</span><span class=lnt>140
+</span><span class=lnt>141
+</span><span class=lnt>142
+</span><span class=lnt>143
+</span><span class=lnt>144
+</span><span class=lnt>145
+</span><span class=lnt>146
+</span><span class=lnt>147
+</span><span class=lnt>148
+</span><span class=lnt>149
+</span><span class=lnt>150
+</span><span class=lnt>151
+</span><span class=lnt>152
+</span><span class=lnt>153
+</span><span class=lnt>154
+</span><span class=lnt>155
+</span><span class=lnt>156
+</span><span class=lnt>157
+</span><span class=lnt>158
+</span><span class=lnt>159
+</span><span class=lnt>160
+</span><span class=lnt>161
+</span><span class=lnt>162
+</span><span class=lnt>163
+</span><span class=lnt>164
+</span><span class=lnt>165
+</span><span class=lnt>166
+</span><span class=lnt>167
+</span><span class=lnt>168
+</span><span class=lnt>169
+</span><span class=lnt>170
+</span><span class=lnt>171
+</span><span class=lnt>172
+</span><span class=lnt>173
+</span><span class=lnt>174
+</span><span class=lnt>175
+</span><span class=lnt>176
+</span><span class=lnt>177
+</span><span class=lnt>178
+</span><span class=lnt>179
+</span><span class=lnt>180
+</span><span class=lnt>181
+</span><span class=lnt>182
+</span><span class=lnt>183
+</span><span class=lnt>184
+</span><span class=lnt>185
+</span><span class=lnt>186
+</span><span class=lnt>187
+</span><span class=lnt>188
+</span><span class=lnt>189
+</span><span class=lnt>190
+</span><span class=lnt>191
+</span><span class=lnt>192
+</span><span class=lnt>193
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;errors&#34;</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;flag&#34;</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;fmt&#34;</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;io&#34;</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;os&#34;</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;regexp&#34;</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;strings&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=nx>args</span> <span class=o>:=</span> <span class=nx>os</span><span class=p>.</span><span class=nx>Args</span>
+</span></span><span class=line><span class=cl>	<span class=nx>cmdArgs</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nf>parseArgs</span><span class=p>(</span><span class=nx>args</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>err</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>		<span class=k>return</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>	<span class=nx>content</span> <span class=o>:=</span> <span class=s>&#34;&#34;</span>
+</span></span><span class=line><span class=cl>	<span class=c1>// 从输入流中读取
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=k>if</span> <span class=nx>cmdArgs</span><span class=p>.</span><span class=nx>filepath</span> <span class=o>==</span> <span class=s>&#34;&#34;</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nx>bytes</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>io</span><span class=p>.</span><span class=nf>ReadAll</span><span class=p>(</span><span class=nx>os</span><span class=p>.</span><span class=nx>Stdin</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>		<span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>			<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;读取输入流出错&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>			<span class=k>return</span>
+</span></span><span class=line><span class=cl>		<span class=p>}</span>
+</span></span><span class=line><span class=cl>		<span class=nx>content</span> <span class=p>=</span> <span class=nb>string</span><span class=p>(</span><span class=nx>bytes</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nx>contentByte</span><span class=p>,</span> <span class=nx>e</span> <span class=o>:=</span> <span class=nf>readFile</span><span class=p>(</span><span class=nx>cmdArgs</span><span class=p>.</span><span class=nx>filepath</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>		<span class=k>if</span> <span class=nx>e</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>			<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>e</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>			<span class=k>return</span>
+</span></span><span class=line><span class=cl>		<span class=p>}</span>
+</span></span><span class=line><span class=cl>		<span class=nx>content</span> <span class=p>=</span> <span class=nx>contentByte</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>	<span class=kd>var</span> <span class=nx>printedLine</span> <span class=p>=</span> <span class=nb>make</span><span class=p>(</span><span class=kd>map</span><span class=p>[</span><span class=kt>int</span><span class=p>]</span><span class=kd>struct</span><span class=p>{})</span>
+</span></span><span class=line><span class=cl>	<span class=nx>line</span> <span class=o>:=</span> <span class=nf>MatchLines</span><span class=p>(</span><span class=nx>content</span><span class=p>,</span> <span class=nx>cmdArgs</span><span class=p>,</span> <span class=nx>printedLine</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=k>for</span> <span class=nx>_</span><span class=p>,</span> <span class=nx>s</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>line</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>s</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>type</span> <span class=nx>cmdArgs</span> <span class=kd>struct</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=nx>filepath</span>            <span class=kt>string</span>
+</span></span><span class=line><span class=cl>	<span class=nx>searchText</span>          <span class=kt>string</span>
+</span></span><span class=line><span class=cl>	<span class=nx>isIgnoreCase</span>        <span class=kt>bool</span>
+</span></span><span class=line><span class=cl>	<span class=nx>isIncludeLineNumber</span> <span class=kt>bool</span>
+</span></span><span class=line><span class=cl>	<span class=nx>afterLine</span>           <span class=kt>int</span>
+</span></span><span class=line><span class=cl>	<span class=nx>beforeLine</span>          <span class=kt>int</span>
+</span></span><span class=line><span class=cl>	<span class=nx>aroundLine</span>          <span class=kt>int</span>
+</span></span><span class=line><span class=cl>	<span class=nx>useRegex</span>            <span class=kt>bool</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=cm>/**
+</span></span></span><span class=line><span class=cl><span class=cm> * 解析命令行参数
+</span></span></span><span class=line><span class=cl><span class=cm> */</span>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>parseArgs</span><span class=p>(</span><span class=nx>args</span> <span class=p>[]</span><span class=kt>string</span><span class=p>)</span> <span class=p>(</span><span class=nx>cmdArgs</span><span class=p>,</span> <span class=kt>error</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=c1>// 选项参数用flag解析
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=nx>isIgnoreCase</span> <span class=o>:=</span> <span class=nx>flag</span><span class=p>.</span><span class=nf>Bool</span><span class=p>(</span><span class=s>&#34;i&#34;</span><span class=p>,</span> <span class=kc>false</span><span class=p>,</span> <span class=s>&#34;ignore case&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=nx>around</span> <span class=o>:=</span> <span class=nx>flag</span><span class=p>.</span><span class=nf>Int</span><span class=p>(</span><span class=s>&#34;a&#34;</span><span class=p>,</span> <span class=mi>0</span><span class=p>,</span> <span class=s>&#34;around line&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=nx>before</span> <span class=o>:=</span> <span class=nx>flag</span><span class=p>.</span><span class=nf>Int</span><span class=p>(</span><span class=s>&#34;B&#34;</span><span class=p>,</span> <span class=mi>0</span><span class=p>,</span> <span class=s>&#34;before line&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=nx>after</span> <span class=o>:=</span> <span class=nx>flag</span><span class=p>.</span><span class=nf>Int</span><span class=p>(</span><span class=s>&#34;A&#34;</span><span class=p>,</span> <span class=mi>0</span><span class=p>,</span> <span class=s>&#34;after line&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=nx>isIncludeLineNumber</span> <span class=o>:=</span> <span class=nx>flag</span><span class=p>.</span><span class=nf>Bool</span><span class=p>(</span><span class=s>&#34;n&#34;</span><span class=p>,</span> <span class=kc>false</span><span class=p>,</span> <span class=s>&#34;include line number&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=nx>useRegex</span> <span class=o>:=</span> <span class=nx>flag</span><span class=p>.</span><span class=nf>Bool</span><span class=p>(</span><span class=s>&#34;e&#34;</span><span class=p>,</span> <span class=kc>false</span><span class=p>,</span> <span class=s>&#34;use regex module&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=nx>err</span> <span class=o>:=</span> <span class=nx>flag</span><span class=p>.</span><span class=nx>CommandLine</span><span class=p>.</span><span class=nf>Parse</span><span class=p>(</span><span class=nx>args</span><span class=p>[</span><span class=mi>1</span><span class=p>:])</span>
+</span></span><span class=line><span class=cl>	<span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=k>return</span> <span class=nx>cmdArgs</span><span class=p>{},</span> <span class=nx>err</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=c1>// 非选项参数用普通方式解析
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=nx>nonFlagArgs</span> <span class=o>:=</span> <span class=nx>flag</span><span class=p>.</span><span class=nf>Args</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>	<span class=c1>// 只包含了搜索内容
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=kd>var</span> <span class=nx>searchText</span> <span class=kt>string</span>
+</span></span><span class=line><span class=cl>	<span class=kd>var</span> <span class=nx>filepath</span> <span class=kt>string</span>
+</span></span><span class=line><span class=cl>	<span class=k>if</span> <span class=nb>len</span><span class=p>(</span><span class=nx>nonFlagArgs</span><span class=p>)</span> <span class=o>==</span> <span class=mi>1</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nx>filepath</span> <span class=p>=</span> <span class=s>&#34;&#34;</span>
+</span></span><span class=line><span class=cl>		<span class=nx>searchText</span> <span class=p>=</span> <span class=nx>nonFlagArgs</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span> <span class=k>else</span> <span class=k>if</span> <span class=nb>len</span><span class=p>(</span><span class=nx>nonFlagArgs</span><span class=p>)</span> <span class=o>==</span> <span class=mi>2</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nx>filepath</span> <span class=p>=</span> <span class=nx>nonFlagArgs</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span>
+</span></span><span class=line><span class=cl>		<span class=nx>searchText</span> <span class=p>=</span> <span class=nx>nonFlagArgs</span><span class=p>[</span><span class=mi>1</span><span class=p>]</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=k>return</span> <span class=nx>cmdArgs</span><span class=p>{},</span> <span class=nx>errors</span><span class=p>.</span><span class=nf>New</span><span class=p>(</span><span class=s>&#34;参数错误,标准参数只允许有文件路径和搜索内容&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>	<span class=k>return</span> <span class=nx>cmdArgs</span><span class=p>{</span><span class=nx>filepath</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>		<span class=nx>searchText</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>		<span class=o>*</span><span class=nx>isIgnoreCase</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>		<span class=o>*</span><span class=nx>isIncludeLineNumber</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>		<span class=o>*</span><span class=nx>after</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>		<span class=o>*</span><span class=nx>before</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>		<span class=o>*</span><span class=nx>around</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>		<span class=o>*</span><span class=nx>useRegex</span><span class=p>},</span> <span class=kc>nil</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=cm>/**
+</span></span></span><span class=line><span class=cl><span class=cm> * 搜索文件并打印内容
+</span></span></span><span class=line><span class=cl><span class=cm> */</span>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>MatchLines</span><span class=p>(</span><span class=nx>content</span> <span class=kt>string</span><span class=p>,</span> <span class=nx>cmdArgs</span> <span class=nx>cmdArgs</span><span class=p>,</span> <span class=nx>printedLine</span> <span class=kd>map</span><span class=p>[</span><span class=kt>int</span><span class=p>]</span><span class=kd>struct</span><span class=p>{})</span> <span class=p>[]</span><span class=kt>string</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=k>if</span> <span class=nx>content</span> <span class=o>==</span> <span class=s>&#34;&#34;</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=k>return</span> <span class=p>[]</span><span class=kt>string</span><span class=p>{}</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>	<span class=nx>searchText</span> <span class=o>:=</span> <span class=nx>cmdArgs</span><span class=p>.</span><span class=nx>searchText</span>
+</span></span><span class=line><span class=cl>	<span class=c1>// 提前编译正则
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=kd>var</span> <span class=nx>compile</span> <span class=o>*</span><span class=nx>regexp</span><span class=p>.</span><span class=nx>Regexp</span>
+</span></span><span class=line><span class=cl>	<span class=k>if</span> <span class=nx>cmdArgs</span><span class=p>.</span><span class=nx>useRegex</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nx>c</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>regexp</span><span class=p>.</span><span class=nf>Compile</span><span class=p>(</span><span class=nx>searchText</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>		<span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>			<span class=nx>_</span><span class=p>,</span> <span class=nx>_</span> <span class=p>=</span> <span class=nx>fmt</span><span class=p>.</span><span class=nf>Fprintf</span><span class=p>(</span><span class=nx>os</span><span class=p>.</span><span class=nx>Stderr</span><span class=p>,</span> <span class=s>&#34;非法的正则表达式: %v\n&#34;</span><span class=p>,</span> <span class=nx>err</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>			<span class=k>return</span> <span class=p>[]</span><span class=kt>string</span><span class=p>{}</span>
+</span></span><span class=line><span class=cl>		<span class=p>}</span>
+</span></span><span class=line><span class=cl>		<span class=nx>compile</span> <span class=p>=</span> <span class=nx>c</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>	<span class=kd>var</span> <span class=nx>matchedLines</span> <span class=p>[]</span><span class=kt>string</span>
+</span></span><span class=line><span class=cl>	<span class=nx>lines</span> <span class=o>:=</span> <span class=nx>strings</span><span class=p>.</span><span class=nf>Split</span><span class=p>(</span><span class=nx>content</span><span class=p>,</span> <span class=s>&#34;\n&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=k>for</span> <span class=nx>lineNum</span><span class=p>,</span> <span class=nx>line</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>lines</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=c1>// 使用正则模式
+</span></span></span><span class=line><span class=cl><span class=c1></span>		<span class=k>if</span> <span class=nx>cmdArgs</span><span class=p>.</span><span class=nx>useRegex</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>			<span class=k>if</span> <span class=nx>compile</span><span class=p>.</span><span class=nf>MatchString</span><span class=p>(</span><span class=nx>line</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>				<span class=nx>matchedLines</span> <span class=p>=</span> <span class=nb>append</span><span class=p>(</span><span class=nx>matchedLines</span><span class=p>,</span> <span class=nf>formatLine</span><span class=p>(</span><span class=nx>cmdArgs</span><span class=p>,</span> <span class=nx>lines</span><span class=p>,</span> <span class=nx>lineNum</span><span class=p>,</span> <span class=nx>printedLine</span><span class=p>)</span><span class=o>...</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>			<span class=p>}</span>
+</span></span><span class=line><span class=cl>		<span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>			<span class=k>if</span> <span class=nx>cmdArgs</span><span class=p>.</span><span class=nx>isIgnoreCase</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>				<span class=nx>searchText</span> <span class=p>=</span> <span class=nx>strings</span><span class=p>.</span><span class=nf>ToLower</span><span class=p>(</span><span class=nx>cmdArgs</span><span class=p>.</span><span class=nx>searchText</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>				<span class=nx>line</span> <span class=p>=</span> <span class=nx>strings</span><span class=p>.</span><span class=nf>ToLower</span><span class=p>(</span><span class=nx>line</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>			<span class=p>}</span>
+</span></span><span class=line><span class=cl>			<span class=k>if</span> <span class=nx>strings</span><span class=p>.</span><span class=nf>Contains</span><span class=p>(</span><span class=nx>line</span><span class=p>,</span> <span class=nx>searchText</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>				<span class=nx>matchedLines</span> <span class=p>=</span> <span class=nb>append</span><span class=p>(</span><span class=nx>matchedLines</span><span class=p>,</span> <span class=nf>formatLine</span><span class=p>(</span><span class=nx>cmdArgs</span><span class=p>,</span> <span class=nx>lines</span><span class=p>,</span> <span class=nx>lineNum</span><span class=p>,</span> <span class=nx>printedLine</span><span class=p>)</span><span class=o>...</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>			<span class=p>}</span>
+</span></span><span class=line><span class=cl>		<span class=p>}</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>	<span class=k>return</span> <span class=nx>matchedLines</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=cm>/**
+</span></span></span><span class=line><span class=cl><span class=cm> * 根据参数打印匹配上的行
+</span></span></span><span class=line><span class=cl><span class=cm> */</span>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>formatLine</span><span class=p>(</span><span class=nx>cmdArgs</span> <span class=nx>cmdArgs</span><span class=p>,</span> <span class=nx>lines</span> <span class=p>[]</span><span class=kt>string</span><span class=p>,</span> <span class=nx>lineNum</span> <span class=kt>int</span><span class=p>,</span> <span class=nx>printedLine</span> <span class=kd>map</span><span class=p>[</span><span class=kt>int</span><span class=p>]</span><span class=kd>struct</span><span class=p>{})</span> <span class=p>[]</span><span class=kt>string</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=kd>var</span> <span class=nx>matchedLines</span> <span class=p>[]</span><span class=kt>string</span>
+</span></span><span class=line><span class=cl>	<span class=kd>var</span> <span class=nx>a</span><span class=p>,</span> <span class=nx>b</span> <span class=kt>int</span>
+</span></span><span class=line><span class=cl>	<span class=k>if</span> <span class=nx>cmdArgs</span><span class=p>.</span><span class=nx>aroundLine</span> <span class=p>&gt;</span> <span class=mi>0</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nx>a</span> <span class=p>=</span> <span class=nx>cmdArgs</span><span class=p>.</span><span class=nx>aroundLine</span>
+</span></span><span class=line><span class=cl>		<span class=nx>b</span> <span class=p>=</span> <span class=nx>cmdArgs</span><span class=p>.</span><span class=nx>aroundLine</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nx>a</span> <span class=p>=</span> <span class=nx>cmdArgs</span><span class=p>.</span><span class=nx>afterLine</span>
+</span></span><span class=line><span class=cl>		<span class=nx>b</span> <span class=p>=</span> <span class=nx>cmdArgs</span><span class=p>.</span><span class=nx>beforeLine</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>	<span class=nx>start</span> <span class=o>:=</span> <span class=nx>lineNum</span> <span class=o>-</span> <span class=nx>b</span>
+</span></span><span class=line><span class=cl>	<span class=k>if</span> <span class=nx>start</span> <span class=p>&lt;</span> <span class=mi>0</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nx>start</span> <span class=p>=</span> <span class=mi>0</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>	<span class=nx>end</span> <span class=o>:=</span> <span class=nx>lineNum</span> <span class=o>+</span> <span class=nx>a</span>
+</span></span><span class=line><span class=cl>	<span class=nx>length</span> <span class=o>:=</span> <span class=nb>len</span><span class=p>(</span><span class=nx>lines</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=k>if</span> <span class=nx>end</span> <span class=o>&gt;=</span> <span class=nx>length</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nx>end</span> <span class=p>=</span> <span class=nx>length</span> <span class=o>-</span> <span class=mi>1</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>	<span class=k>for</span> <span class=nx>index</span> <span class=o>:=</span> <span class=nx>start</span><span class=p>;</span> <span class=nx>index</span> <span class=o>&lt;=</span> <span class=nx>end</span><span class=p>;</span> <span class=nx>index</span><span class=o>++</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=c1>// 如果打印过了就不再打印
+</span></span></span><span class=line><span class=cl><span class=c1></span>		<span class=k>if</span> <span class=nx>_</span><span class=p>,</span> <span class=nx>exist</span> <span class=o>:=</span> <span class=nx>printedLine</span><span class=p>[</span><span class=nx>index</span><span class=p>];</span> <span class=nx>exist</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>			<span class=k>continue</span>
+</span></span><span class=line><span class=cl>		<span class=p>}</span>
+</span></span><span class=line><span class=cl>		<span class=k>if</span> <span class=nx>cmdArgs</span><span class=p>.</span><span class=nx>isIncludeLineNumber</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>			<span class=nx>matchedLines</span> <span class=p>=</span> <span class=nb>append</span><span class=p>(</span><span class=nx>matchedLines</span><span class=p>,</span> <span class=nx>fmt</span><span class=p>.</span><span class=nf>Sprintf</span><span class=p>(</span><span class=s>&#34;%d:%s&#34;</span><span class=p>,</span> <span class=nx>index</span><span class=p>,</span> <span class=nx>lines</span><span class=p>[</span><span class=nx>index</span><span class=p>]))</span>
+</span></span><span class=line><span class=cl>		<span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>			<span class=nx>matchedLines</span> <span class=p>=</span> <span class=nb>append</span><span class=p>(</span><span class=nx>matchedLines</span><span class=p>,</span> <span class=nx>fmt</span><span class=p>.</span><span class=nf>Sprintf</span><span class=p>(</span><span class=nx>lines</span><span class=p>[</span><span class=nx>index</span><span class=p>]))</span>
+</span></span><span class=line><span class=cl>		<span class=p>}</span>
+</span></span><span class=line><span class=cl>		<span class=nx>printedLine</span><span class=p>[</span><span class=nx>index</span><span class=p>]</span> <span class=p>=</span> <span class=kd>struct</span><span class=p>{}{}</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>	<span class=k>return</span> <span class=nx>matchedLines</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>readFile</span><span class=p>(</span><span class=nx>filepath</span> <span class=kt>string</span><span class=p>)</span> <span class=p>(</span><span class=kt>string</span><span class=p>,</span> <span class=kt>error</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=c1>// 检查文件是否存在
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=nx>info</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>os</span><span class=p>.</span><span class=nf>Stat</span><span class=p>(</span><span class=nx>filepath</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=k>if</span> <span class=nx>os</span><span class=p>.</span><span class=nf>IsNotExist</span><span class=p>(</span><span class=nx>err</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=k>return</span> <span class=s>&#34;&#34;</span><span class=p>,</span> <span class=nx>fmt</span><span class=p>.</span><span class=nf>Errorf</span><span class=p>(</span><span class=s>&#34;找不到 %s 文件&#34;</span><span class=p>,</span> <span class=nx>filepath</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=c1>// 检查是否是目录
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=k>if</span> <span class=nx>err</span> <span class=o>==</span> <span class=kc>nil</span> <span class=o>&amp;&amp;</span> <span class=nx>info</span><span class=p>.</span><span class=nf>IsDir</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=k>return</span> <span class=s>&#34;&#34;</span><span class=p>,</span> <span class=nx>fmt</span><span class=p>.</span><span class=nf>Errorf</span><span class=p>(</span><span class=s>&#34;%s 是一个目录而非文件&#34;</span><span class=p>,</span> <span class=nx>filepath</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=c1>// 读取文件内容
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=nx>content</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>os</span><span class=p>.</span><span class=nf>ReadFile</span><span class=p>(</span><span class=nx>filepath</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=k>if</span> <span class=nx>os</span><span class=p>.</span><span class=nf>IsPermission</span><span class=p>(</span><span class=nx>err</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>			<span class=k>return</span> <span class=s>&#34;&#34;</span><span class=p>,</span> <span class=nx>errors</span><span class=p>.</span><span class=nf>New</span><span class=p>(</span><span class=s>&#34;权限被拒绝&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>		<span class=p>}</span>
+</span></span><span class=line><span class=cl>		<span class=k>return</span> <span class=s>&#34;&#34;</span><span class=p>,</span> <span class=nx>err</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=k>return</span> <span class=nb>string</span><span class=p>(</span><span class=nx>content</span><span class=p>),</span> <span class=kc>nil</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><h2 id=总结>总结</h2><p>通过这次优化，我们用到了更多golang的特性，比如用map模拟set、读取参数中的选项参数、正则使用 以及 数组添加等。</p><p>但是稍微有些经验的读者都能发现一个严重问题 ：<mark>内存大爆炸</mark></p><p>我们的输入流、从文件读出来的内容都放到了内存中，这是一个严重隐患，我们将在下一篇中优化此项</p></section><footer class=article-footer><section class=article-tags><a href=/tags/go/>Go</a>
+<a href=/tags/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/>项目实战</a></section><section class=article-copyright><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><path d="M14.5 9a3.5 4 0 100 6"/></svg>
+<span>Licensed under CC BY-NC-SA 4.0</span></section></footer></article><aside class=related-content--wrapper><h2 class=section-title>Related content</h2><div class=related-content><div class="flex article-list--tile"><article><a href=/p/%E4%BA%94%E5%A4%A9%E9%80%9F%E9%80%9Ago%E4%B8%80--%E6%90%AD%E5%BB%BAmini-grep/><div class=article-details><h2 class=article-title>五天速通go(一)--搭建mini-grep</h2></div></a></article></div></div></aside><div class=disqus-container><div id=disqus_thread></div><script>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//hugo-theme-stack.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script><noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></div><style>.disqus-container{background-color:var(--card-background);border-radius:var(--card-border-radius);box-shadow:var(--shadow-l1);padding:var(--card-padding)}</style><script>window.addEventListener("onColorSchemeChange",e=>{typeof DISQUS=="object"&&DISQUS.reset({reload:!0})})</script><footer class=site-footer><section class=copyright>&copy;
+2020 -
+2025 骆灵上</section><section class=powerby>Built with <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a><br>Theme <b><a href=https://github.com/CaiJimmy/hugo-theme-stack target=_blank rel=noopener data-version=3.30.0>Stack</a></b> designed by <a href=https://jimmycai.com target=_blank rel=noopener>Jimmy</a></section></footer><div class=pswp tabindex=-1 role=dialog aria-hidden=true><div class=pswp__bg></div><div class=pswp__scroll-wrap><div class=pswp__container><div class=pswp__item></div><div class=pswp__item></div><div class=pswp__item></div></div><div class="pswp__ui pswp__ui--hidden"><div class=pswp__top-bar><div class=pswp__counter></div><button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+<button class="pswp__button pswp__button--share" title=Share></button>
+<button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button><div class=pswp__preloader><div class=pswp__preloader__icn><div class=pswp__preloader__cut><div class=pswp__preloader__donut></div></div></div></div></div><div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap"><div class=pswp__share-tooltip></div></div><button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+</button>
+<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button><div class=pswp__caption><div class=pswp__caption__center></div></div></div></div></div><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo=" crossorigin=anonymous defer></script><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU=" crossorigin=anonymous defer></script><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css crossorigin=anonymous><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css crossorigin=anonymous></main></div><script src=https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z+KMkF24hUW8WePSA9HM=" crossorigin=anonymous></script><script type=text/javascript src=/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js defer></script><script>(function(){const e=document.createElement("link");e.href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap",e.type="text/css",e.rel="stylesheet",document.head.appendChild(e)})()</script></body></html>
